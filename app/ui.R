@@ -23,10 +23,10 @@ ui <- dashboardPage(
       textInput(inputId = "Vendor", label = "Choose vendor:", value = "77815736"),
       menuItem(text = "Filter Inputs", 
                icon = icon("filter"),
-               sliderInput(inputId = "Min_Contract", label = "Minimum Number of Contracts:", min = 0, max = 100, value = 0, step = 1),
-               sliderInput(inputId = "Max_contract", label = "Maximum Number of Contracts:", min = 0, max = 1500, value = 0, step = 1),
-               numericInput(inputId = "Min_Revenue", label = "Minimum revenue:", value = 0, min = 0, max = NA, step = 1),
-               numericInput(inputId = "Max_Revenue", label = "Maximum revenue:", value = 100000, min = 0, max = NA, step = 1)
+               sliderInput(inputId = "Min_Contract", label = "Minimum Number of Contracts:", min = 0, max = 100, value = 50, step = 1),
+               sliderInput(inputId = "Max_Contract", label = "Maximum Number of Contracts:", min = 0, max = 1500, value = 100, step = 1),
+               numericInput(inputId = "Min_Revenue", label = "Minimum revenue:", value = 20000000, min = 0, max = NA, step = 1),
+               numericInput(inputId = "Max_Revenue", label = "Maximum revenue:", value = 80000000, min = 0, max = NA, step = 1)
       )
     ),
     sidebarMenu(
@@ -64,7 +64,8 @@ ui <- dashboardPage(
                            choices = c("Total" = "Total", "Percent" = "Percent"), 
                            selected = "Total", multiple = FALSE)
       )
-    )
+    ),
+    actionButton("update","Update")
   ),
   dashboardBody(
     
@@ -73,7 +74,8 @@ ui <- dashboardPage(
               includeMarkdown("intro.md")
       ),
       tabItem(tabName = "dashboard",
-              h2("Dashboard Tab Content")
+              fluidRow(box(plotOutput("pca_plot"), width = 12)),
+              fluidRow(box(plotOutput("hclust_plot"), width = 12))
       )
     )
   )
