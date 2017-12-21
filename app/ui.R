@@ -81,7 +81,7 @@ ui <- dashboardPage(
       ),
       tabItem(tabName = "dashboard",
               fluidRow(
-                box(dataTableOutput("comparison_table"), width = 6),
+                box(DT::dataTableOutput("comparison_table"), width = 6),
                 tabBox(tabPanel(title = "Variance Explained", plotOutput("pca_sum")),
                        tabPanel(title = "PCA Plot", plotOutput("pca_plot")), id = "pca", selected = "Variance Explained",
                        title = "Principal Component Analysis (PCA)", width = 6)
