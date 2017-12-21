@@ -37,14 +37,20 @@ ui <- dashboardPage(
                            choices = c("K-Means" = "K_Means", "Heirarchical" = "Heirarchical"), 
                            selected = "K-Means", 
                            multiple = FALSE),
-               conditionalPanel(condition = "input.Clustering_Method == 'K_Means'",
-                                sliderInput(inputId = "Num_Groups", 
-                                            label = "Number of Groups:", 
-                                            min = 1, 
-                                            max = 100, 
-                                            value = 1, 
-                                            step = 1)
-               ),
+               sliderInput(inputId = "Num_Groups", 
+                           label = "Number of Groups:",
+                           min = 1,
+                           max = 100,
+                           value = 1,
+                           step = 1),
+               # conditionalPanel(condition = "input.Clustering_Method == 'K_Means'",
+               #                  sliderInput(inputId = "Num_Groups", 
+               #                              label = "Number of Groups:", 
+               #                              min = 1, 
+               #                              max = 100, 
+               #                              value = 1, 
+               #                              step = 1)
+               # ),
                conditionalPanel(condition = "input.Clustering_Method == 'Heirarchical'",
                                 selectInput(inputId = "HClust_Method", label = "Choose heirarchical clustering method:", 
                                             choices = c("Complete" = "Complete", "Average" = "Average"), 
@@ -74,7 +80,12 @@ ui <- dashboardPage(
               includeMarkdown("intro.md")
       ),
       tabItem(tabName = "dashboard",
-              fluidRow(box(plotOutput("pca_plot"), width = 12)),
+              fluidRow(
+                box(dataTableOutput("comparison_table"), width = 6),
+                tabBox(tabPanel(title = "Variance Explained", plotOutput("pca_sum")),
+                       tabPanel(title = "PCA Plot", plotOutput("pca_plot")), id = "pca", selected = "Variance Explained",
+                       title = "Principal Component Analysis (PCA)", width = 6)
+                ),
               fluidRow(box(plotOutput("hclust_plot"), width = 12))
       )
     )

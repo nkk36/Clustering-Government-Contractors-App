@@ -9,6 +9,7 @@ library(shiny)
 library(shinydashboard)
 library(dplyr)
 library(ggfortify)
+library(DT)
 
 # Load functions
 source("R/Load_Data.R")
@@ -92,6 +93,94 @@ server <- function(input, output){
     })
 
   }) # End pca_plot
+  
+  output$pca_sum <- renderPlot({
+    if (v$doPlot == FALSE) return()
+    
+    isolate({
+      pca = prcomp(scale(dataInput()))
+      plot(1 - pca$sdev^2/sum(pca$sdev^2), xlab = "Principal Components", ylab = "Variance Explained")
+    })
+    
+  }) # End pca_sum
+  
+  output$comparison_table <- renderDataTable({
+    if (v$doPlot == FALSE) return()
+    
+    isolate({
+      if (input$Clustering_Method == "K_Means" & input$Similarity_Calc == "Euclidean" & input$Scale_Variables == TRUE){
+        
+        d.kmeans = kmeans(dist(scale(dataInput())), centers = input$Num_Groups)
+        GetGroup = d.kmeans$cluster[which(duns()$duns == input$Vendor)]
+        close = data.frame(duns()[which(d.kmeans$cluster == GetGroup),])
+        close = close[order(close$vendorname),]
+        
+        datatable(close,options = list("pageLength" = 10))
+      }else if (input$Clustering_Method == "K_Means" & input$Similarity_Calc == "Euclidean" & input$Scale_Variables == FALSE){
+        
+        d.kmeans = kmeans(dist(dataInput()), centers = input$Num_Groups)
+        GetGroup = d.kmeans$cluster[which(duns()$duns == input$Vendor)]
+        close = data.frame(duns()[which(d.kmeans$cluster == GetGroup),])
+        close = close[order(close$vendorname),]
+        
+        datatable(close,options = list("pageLength" = 10))
+      }else if (input$Clustering_Method == "K_Means" & input$Similarity_Calc == "Pearson" & input$Scale_Variables == TRUE){
+        
+        d.kmeans = kmeans(as.dist(1 - cor(t(scale(dataInput())), method = "pearson")), centers = input$Num_Groups)
+        GetGroup = d.kmeans$cluster[which(duns()$duns == input$Vendor)]
+        close = data.frame(duns()[which(d.kmeans$cluster == GetGroup),])
+        close = close[order(close$vendorname),]
+        
+        datatable(close,options = list("pageLength" = 10))
+      }else if (input$Clustering_Method == "K_Means" & input$Similarity_Calc == "Pearson" & input$Scale_Variables == FALSE){
+        
+        d.kmeans = kmeans(as.dist(1 - cor(t(dataInput()), method = "pearson")), centers = input$Num_Groups)
+        GetGroup = d.kmeans$cluster[which(duns()$duns == input$Vendor)]
+        close = data.frame(duns()[which(d.kmeans$cluster == GetGroup),])
+        close = close[order(close$vendorname),]
+        
+        datatable(close,options = list("pageLength" = 10))
+      }else if (input$Clustering_Method == "Heirarchical" & input$Similarity_Calc == "Euclidean" & input$Scale_Variables == TRUE){
+        
+        d.hclust = hclust(dist(scale(dataInput())), method = tolower(input$HClust_Method))
+        cut = cutree(d.hclust, k = input$Num_Groups)
+        GetGroup = cut[which(duns()$duns == input$Vendor)]
+        close = data.frame(duns()[which(cut == GetGroup),])
+        close = close[order(close$vendorname),]
+        
+        datatable(close,options = list("pageLength" = 10))
+      }else if (input$Clustering_Method == "Heirarchical" & input$Similarity_Calc == "Euclidean" & input$Scale_Variables == FALSE){
+        
+        d.hclust = hclust(dist(dataInput()), method = tolower(input$HClust_Method))
+        cut = cutree(d.hclust, k = input$Num_Groups)
+        GetGroup = cut[which(duns()$duns == input$Vendor)]
+        close = data.frame(duns()[which(cut == GetGroup),])
+        close = close[order(close$vendorname),]
+        close = close[order(close$vendorname),]
+        
+        datatable(close,options = list("pageLength" = 10))
+      }else if (input$Clustering_Method == "Heirarchical" & input$Similarity_Calc == "Pearson" & input$Scale_Variables == TRUE){
+        
+        d.hclust = hclust(as.dist(1 - cor(t(scale(dataInput())), method = "pearson")), method = tolower(input$HClust_Method))
+        cut = cutree(d.hclust, k = input$Num_Groups)
+        GetGroup = cut[which(duns()$duns == input$Vendor)]
+        close = data.frame(duns()[which(cut == GetGroup),])
+        close = close[order(close$vendorname),]
+        
+        datatable(close,options = list("pageLength" = 10))
+      }else if (input$Clustering_Method == "Heirarchical" & input$Similarity_Calc == "Pearson" & input$Scale_Variables == FALSE){
+        
+        d.hclust = hclust(as.dist(1 - cor(t(dataInput()), method = "pearson")), method = tolower(input$HClust_Method))
+        cut = cutree(d.hclust, k = input$Num_Groups)
+        GetGroup = cut[which(duns()$duns == input$Vendor)]
+        close = data.frame(duns()[which(cut == GetGroup),])
+        close = close[order(close$vendorname),]
+        
+        datatable(close,options = list("pageLength" = 10))
+      }
+    }) 
+    
+    })# End comparison_table
   
   output$hclust_plot <- renderPlot({
     if (v$doPlot == FALSE) return()
