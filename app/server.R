@@ -17,8 +17,8 @@ source("R/Load_Data.R")
 # Load data
 Data = Load_Data(TRUE)
 naics = Data[[1]]
-rc = Data[[2]]
-vn = Data[[3]]
+#rc = Data[[2]]
+vn = Data[[2]]
 
 ###########################################################################################################################
 #                                                                                                                         #
@@ -51,19 +51,19 @@ server <- function(input, output){
   dataInput <- eventReactive(input$update, {
 
     # Subset data
-    naics = naics[rc$ncontract >= input$Min_Contract & 
-                    rc$ncontract <= input$Max_Contract |
-                    rc$sum >= input$Min_Revenue & 
-                    rc$sum <= input$Max_Revenue,]
-    naics = naics[,2:ncol(naics)] # Remove duns column
+    # naics = naics[rc$ncontract >= input$Min_Contract & 
+    #                 rc$ncontract <= input$Max_Contract |
+    #                 rc$sum >= input$Min_Revenue & 
+    #                 rc$sum <= input$Max_Revenue,]
+    # naics = naics[,2:ncol(naics)] # Remove duns column
 
     # Convert to percentage
     if (input$Perc_Total == "Percent"){
       naics[,1:ncol(naics)] = naics[,1:ncol(naics)]/sum(naics[,1:ncol(naics)])
     }
 
-    # Take only columns that have a sum greater than 0
-    naics = naics[,which(colSums(naics) > 0)]
+    # # Take only columns that have a sum greater than 0
+    # naics = naics[,which(colSums(naics) > 0)]
     
     # Return data
     naics
@@ -72,10 +72,12 @@ server <- function(input, output){
   duns <- reactive({
 
     # Subset data
-    vn = vn[rc$ncontract >= input$Min_Contract & 
-              rc$ncontract <= input$Max_Contract | 
-              rc$sum >= input$Min_Revenue & 
-              rc$sum <= input$Max_Revenue,]
+    # vn = vn[rc$ncontract >= input$Min_Contract & 
+    #           rc$ncontract <= input$Max_Contract | 
+    #           rc$sum >= input$Min_Revenue & 
+    #           rc$sum <= input$Max_Revenue,]
+    
+    vn
 
   })
   

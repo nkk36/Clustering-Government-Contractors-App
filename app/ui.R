@@ -21,7 +21,7 @@ ui <- dashboardPage(
     sidebarMenu(
       menuItem("Home", tabName = "home", icon = icon("home")),
       menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
-      textInput(inputId = "Vendor", label = "Choose vendor:", value = "77815736"),
+      textInput(inputId = "Vendor", label = "Choose vendor:", value = "964725688"), #77815736
       menuItem(text = "Filter Inputs", 
                icon = icon("filter"),
                sliderInput(inputId = "Min_Contract", label = "Minimum Number of Contracts:", min = 0, max = 100, value = 50, step = 1),
