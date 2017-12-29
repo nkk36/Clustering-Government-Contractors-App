@@ -38,30 +38,30 @@ ui <- dashboardPage(
                            choices = c("K-Means" = "K_Means", "Heirarchical" = "Heirarchical"), 
                            selected = "K-Means", 
                            multiple = FALSE),
-               sliderInput(inputId = "Num_Groups", 
-                           label = "Number of Groups:",
-                           min = 1,
-                           max = 100,
-                           value = 1,
-                           step = 1),
-               # conditionalPanel(condition = "input.Clustering_Method == 'K_Means'",
-               #                  sliderInput(inputId = "Num_Groups", 
-               #                              label = "Number of Groups:", 
-               #                              min = 1, 
-               #                              max = 100, 
-               #                              value = 1, 
-               #                              step = 1)
-               # ),
+               # sliderInput(inputId = "Num_Groups", 
+               #             label = "Number of Groups:",
+               #             min = 1,
+               #             max = 100,
+               #             value = 1,
+               #             step = 1),
+               conditionalPanel(condition = "input.Clustering_Method == 'K_Means'",
+                                sliderInput(inputId = "Num_Groups",
+                                            label = "Number of Groups:",
+                                            min = 1,
+                                            max = 100,
+                                            value = 1,
+                                            step = 1)
+               ),
                conditionalPanel(condition = "input.Clustering_Method == 'Heirarchical'",
                                 selectInput(inputId = "HClust_Method", label = "Choose heirarchical clustering method:", 
                                             choices = c("Complete" = "Complete", "Average" = "Average"), 
-                                            selected = "Complete", 
+                                            selected = "Average", 
                                             multiple = FALSE)
                ),
                selectInput(inputId = "Similarity_Calc", 
                            label = "Choose similarity calculation:", 
                            choices = c("Euclidean" = "Euclidean", "Pearson" = "Pearson"), 
-                           selected = "Euclidean", 
+                           selected = "Pearson", 
                            multiple = FALSE),
                checkboxInput(inputId = "Scale_Variables", 
                              label = "Scale Variables", 
@@ -87,7 +87,14 @@ ui <- dashboardPage(
                        tabPanel(title = "PCA Plot", plotOutput("pca_plot")), id = "pca", selected = "Variance Explained",
                        title = "Principal Component Analysis (PCA)", width = 6)
                 ),
-              fluidRow(box(plotOutput("hclust_plot"), width = 12))
+              conditionalPanel(condition = "input.Clustering_Method == 'Heirarchical'",
+                               fluidRow(
+                                 box(sliderInput(inputId = "HClust_NGroups", 
+                                                          label = "Number of groups:",
+                                                          min = 1,
+                                                          max = 100, 
+                                                          value = 1), width = 4),
+                                 box(plotOutput("hclust_plot"), width = 8)))
       )
     )
   )

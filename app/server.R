@@ -177,11 +177,10 @@ server <- function(input, output){
         GetGroup = cut[which(duns()$duns == input$Vendor)]
         close = data.frame(duns()[which(cut == GetGroup),])
         close = close[order(close$vendorname),]
-        
+
         datatable(close,options = list("pageLength" = 10))
       }
     }) 
-    
     })# End comparison_table
   
   output$hclust_plot <- renderPlot({
@@ -197,8 +196,8 @@ server <- function(input, output){
                           method = tolower(input$HClust_Method)
                           )
       }
-      
-      plot(d.hclust, labels = FALSE, xlab = "Companies", sub = "")
+
+      plot(d.hclust, labels = FALSE, xlab = "Companies", sub = "") #+ abline(h = vline, col = "blue")
     })
     
   }) # End hclust_plot
