@@ -176,7 +176,7 @@ server <- function(input, output){
       if (input$Clustering_Method == "K_Means" & input$Similarity_Calc == "Euclidean"){
 
         d.kmeans = kmeans(dist(dataInput()), centers = input$Num_Groups)
-        GetGroup = d.kmeans$cluster[which(duns()$duns == input$Vendor)]
+        GetGroup = d.kmeans$cluster[which(duns()$duns == duns()$duns[which(duns()$vendorname == input$Vendor)])]
         close = data.frame(duns()[which(d.kmeans$cluster == GetGroup),])
         close = close[order(close$vendorname),]
 
@@ -184,7 +184,7 @@ server <- function(input, output){
       }else if (input$Clustering_Method == "K_Means" & input$Similarity_Calc == "Euclidean"){
 
         d.kmeans = kmeans(dist(dataInput()), centers = input$Num_Groups)
-        GetGroup = d.kmeans$cluster[which(duns()$duns == input$Vendor)]
+        GetGroup = d.kmeans$cluster[which(duns()$duns == duns()$duns[which(duns()$vendorname == input$Vendor)])]
         close = data.frame(duns()[which(d.kmeans$cluster == GetGroup),])
         close = close[order(close$vendorname),]
 
@@ -192,7 +192,7 @@ server <- function(input, output){
       }else if (input$Clustering_Method == "K_Means" & input$Similarity_Calc == "Pearson"){
 
         d.kmeans = kmeans(as.dist(1 - cor(t(dataInput()), method = "pearson")), centers = input$Num_Groups)
-        GetGroup = d.kmeans$cluster[which(duns()$duns == input$Vendor)]
+        GetGroup = d.kmeans$cluster[which(duns()$duns == duns()$duns[which(duns()$vendorname == input$Vendor)])]
         close = data.frame(duns()[which(d.kmeans$cluster == GetGroup),])
         close = close[order(close$vendorname),]
 
@@ -200,7 +200,7 @@ server <- function(input, output){
       }else if (input$Clustering_Method == "K_Means" & input$Similarity_Calc == "Pearson"){
 
         d.kmeans = kmeans(as.dist(1 - cor(t(dataInput()), method = "pearson")), centers = input$Num_Groups)
-        GetGroup = d.kmeans$cluster[which(duns()$duns == input$Vendor)]
+        GetGroup = d.kmeans$cluster[which(duns()$duns == duns()$duns[which(duns()$vendorname == input$Vendor)])]
         close = data.frame(duns()[which(d.kmeans$cluster == GetGroup),])
         close = close[order(close$vendorname),]
 
@@ -209,7 +209,7 @@ server <- function(input, output){
 
         d.hclust = hclust(dist(dataInput()), method = tolower(input$HClust_Method))
         cut = cutree(d.hclust, k = input$HClust_NGroups)
-        GetGroup = cut[which(duns()$duns == input$Vendor)]
+        GetGroup = cut[which(duns()$duns == duns()$duns[which(duns()$vendorname == input$Vendor)])]
         close = data.frame(duns()[which(cut == GetGroup),])
         close = close[order(close$vendorname),]
 
@@ -218,7 +218,7 @@ server <- function(input, output){
 
         d.hclust = hclust(dist(dataInput()), method = tolower(input$HClust_Method))
         cut = cutree(d.hclust, k = input$HClust_NGroups)
-        GetGroup = cut[which(duns()$duns == input$Vendor)]
+        GetGroup = cut[which(duns()$duns == duns()$duns[which(duns()$vendorname == input$Vendor)])]
         close = data.frame(duns()[which(cut == GetGroup),])
         close = close[order(close$vendorname),]
         close = close[order(close$vendorname),]
@@ -228,7 +228,7 @@ server <- function(input, output){
 
         d.hclust = hclust(as.dist(1 - cor(t(dataInput()), method = "pearson")), method = tolower(input$HClust_Method))
         cut = cutree(d.hclust, k = input$HClust_NGroups)
-        GetGroup = cut[which(duns()$duns == input$Vendor)]
+        GetGroup = cut[which(duns()$duns == duns()$duns[which(duns()$vendorname == input$Vendor)])]
         close = data.frame(duns()[which(cut == GetGroup),])
         close = close[order(close$vendorname),]
 
@@ -237,7 +237,7 @@ server <- function(input, output){
 
         d.hclust = hclust(as.dist(1 - cor(t(dataInput()), method = "pearson")), method = tolower(input$HClust_Method))
         cut = cutree(d.hclust, k = input$HClust_NGroups)
-        GetGroup = cut[which(duns()$duns == input$Vendor)]
+        GetGroup = cut[which(duns()$duns == duns()$duns[which(duns()$vendorname == input$Vendor)])]
         close = data.frame(duns()[which(cut == GetGroup),])
         close = close[order(close$vendorname),]
 

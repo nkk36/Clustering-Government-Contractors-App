@@ -4,10 +4,18 @@
 #                                                                                                                         #
 ###########################################################################################################################
 
+# Load packages
 library(shiny)
 library(shinydashboard)
 library(markdown)
 library(DT)
+
+# Load functions
+source("R/Load_Data.R")
+
+# Load data
+Data = Load_Data(TRUE)
+vn = Data[[2]]
 
 ###########################################################################################################################
 #                                                                                                                         #
@@ -17,11 +25,15 @@ library(DT)
 
 ui <- dashboardPage(
   dashboardHeader(title = "Clustering Government Contractors", titleWidth = 400),
-  dashboardSidebar(
+  dashboardSidebar(width = "20em",
     sidebarMenu(
       menuItem("Home", tabName = "home", icon = icon("home")),
       menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
-      textInput(inputId = "Vendor", label = "Choose vendor:", value = "964725688"), #77815736
+      selectInput(inputId = "Vendor", 
+                  label = "Choose vendor:", 
+                  choices = vn$vendorname,
+                  selected = "BOOZ ALLEN HAMILTON INC."),
+      #textInput(inputId = "Vendor", label = "Choose vendor:", value = "964725688"), #77815736
       menuItem(text = "Pre-Processing Inputs",
                icon = icon("filter"),
                selectInput(inputId = "Dim_Reduction",
