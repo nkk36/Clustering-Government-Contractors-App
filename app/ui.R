@@ -22,7 +22,7 @@ ui <- dashboardPage(
       menuItem("Home", tabName = "home", icon = icon("home")),
       menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
       textInput(inputId = "Vendor", label = "Choose vendor:", value = "964725688"), #77815736
-      menuItem(text = "Pre-Process Inputs",
+      menuItem(text = "Pre-Processing Inputs",
                icon = icon("filter"),
                selectInput(inputId = "Dim_Reduction",
                            label = "Dimensionality Reduction:",
