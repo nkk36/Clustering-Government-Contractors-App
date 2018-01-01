@@ -12,12 +12,17 @@ library(ggfortify)
 library(DT)
 
 # Load functions
-source("R/Load_Data.R")
+source("R/load_data.R")
+source("R/calculate_variance_explained.R")
+source("R/plot_variance_explained.R")
+source("R/get_table_kmeans.R")
+source("R/get_table_heirarchical.R")
+
 
 # Load data
-Data = Load_Data(TRUE)
-naics = Data[[1]]
-vn = Data[[2]]
+all_data = load_data(TRUE)
+naics_activity = all_data[[1]]
+duns_vendor_names_orig = all_data[[2]]
 
 ###########################################################################################################################
 #                                                                                                                         #
@@ -45,52 +50,52 @@ server <- function(input, output){
   #                                                               #
   #################################################################
 
-  dataInput <- eventReactive(input$update, {
+  data_for_clustering <- eventReactive(input$update, {
 
     # Convert to percentage
-    if (input$Perc_Total == "Percent"){
-      naics[,1:ncol(naics)] = naics[,1:ncol(naics)]/sum(naics[,1:ncol(naics)])
+    if (input$total_percent_binary == "Percent"){
+      naics_activity = sweep(naics_activity, 1, rowSums(naics_activity), FUN="/")
     }
     
-    if (input$Scale_Variables == TRUE){
-      naics = scale(naics)
+    if (input$scale_variable_binary == TRUE){
+      naics_activity = scale(naics_activity)
     }
     
-    if (input$Dim_Reduction == "PCA"){
-      naics = data.frame(prcomp(naics)$x[,1:input$Components])
+    if (input$dim_reduction_technique == "PCA"){
+      naics_activity = data.frame(prcomp(naics_activity)$x[,1:input$n_dim_reduction])
     }
-    else if (input$Dim_Reduction == "SVD"){
-      SVD = svd(naics)
-      naics = data.frame(SVD$u[,1:input$Components])
+    else if (input$dim_reduction_technique == "SVD"){
+      SVD = svd(naics_activity)
+      naics_activity = data.frame(SVD$u[,1:input$n_dim_reduction])
     }
     
-        # Take only columns that have a non-zero column sum
-        naics = naics[,which(colSums(naics) != 0)]
+    # Take only columns that have a non-zero column sum
+    naics_activity = naics_activity[,which(colSums(naics_activity) != 0)]
 
     # Return data
-    naics
+    naics_activity
   })
 
-  originalData <- eventReactive(input$update, {
+  data_before_dim_reduction <- eventReactive(input$update, {
 
     # Convert to percentage
-    if (input$Perc_Total == "Percent"){
-      naics[,1:ncol(naics)] = naics[,1:ncol(naics)]/sum(naics[,1:ncol(naics)])
+    if (input$total_percent_binary == "Percent"){
+      naics_activity = sweep(naics_activity, 1, rowSums(naics_activity), FUN="/")
     }
 
-    if (input$Scale_Variables == TRUE){
-      naics = scale(naics)
+    if (input$scale_variable_binary == TRUE){
+      naics_activity = scale(naics_activity)
     }
 
     # Take only columns that have a non-zero column sum
-    naics = naics[,which(colSums(naics) !=0)]
+    naics_activity = naics_activity[,which(colSums(naics_activity) !=0)]
 
     # Return data
-    naics
+    naics_activity
   })
 
-  duns <- eventReactive(input$update, {
-    vn
+  duns_vendor_names <- eventReactive(input$update, {
+    duns_vendor_names_orig
   })
 
   #################################################################
@@ -99,17 +104,17 @@ server <- function(input, output){
   #                                                               #
   #################################################################
 
-  output$Dim_Reduction_Plot = renderPlot({
+  output$dim_reduction_component_plot = renderPlot({
     if (v$doPlot == FALSE) return()
 
     isolate({
 
-      if (input$Dim_Reduction == "PCA"){
-        autoplot(prcomp(originalData()))
+      if (input$dim_reduction_technique == "PCA"){
+        autoplot(prcomp(data_before_dim_reduction()))
       }
-      else if (input$Dim_Reduction == "SVD"){
-        SVD = svd(originalData())
-        SVD = data.frame(SVD$u)
+      else if (input$dim_reduction_technique == "SVD"){
+        SVD = data.frame(svd(data_before_dim_reduction())$u)
+        
         ggplot(data = SVD) +
           geom_point(mapping = aes(x = X1, y = X2)) +
           ggtitle("Top Two Singular Vectors") +
@@ -120,150 +125,74 @@ server <- function(input, output){
 
     })
 
-  }) # End pca_plot
+  }) # End dim_reduction_component_plot
 
-  output$Variance_Explained = renderPlot({
+  output$variance_explained_plot = renderPlot({
     if (v$doPlot == FALSE) return()
 
     isolate({
 
-      Components = input$Components
-      if (input$Dim_Reduction == "PCA"){
+      n_reduced_features = input$n_dim_reduction
+      if (input$dim_reduction_technique == "PCA"){
         
-        Components = input$Components
-        pca = prcomp(originalData())
-        pca = 1 - pca$sdev^2/sum(pca$sdev^2)
-        pca = data.frame(var_exp = pca[1:Components])
+        pca = prcomp(data_before_dim_reduction())
+        pca = calculate_variance_explained(data = pca, features =  n_reduced_features, dim_reduction_technique ="PCA")
+        plot_variance_explained(data = pca, features = n_reduced_features, dim_reduction_technique = "PCA")
         
-        ggplot(data = pca) + 
-          geom_point(mapping = aes(x = 1:Components, 
-                                   y = var_exp,
-                                   size = 1)
-                     ) + 
-          scale_x_continuous(breaks = 1:Components) + 
-          scale_y_continuous(limits = c(0,1)) +
-          xlab("Principal Components") + 
-          ylab("Variance Explained") + 
-          theme(legend.position="none")
       }
-      else if (input$Dim_Reduction == "SVD"){
+      else if (input$dim_reduction_technique == "SVD"){
         
-        Components = input$Components
-        SVD = svd(originalData())
-        SVD = 1 - SVD$d^2/sum(SVD$d^2)
-        SVD = data.frame(var_exp = SVD[1:Components])
+        SVD = svd(data_before_dim_reduction())
+        SVD = calculate_variance_explained(data = SVD, features =  n_reduced_features, dim_reduction_technique ="SVD")
+        plot_variance_explained(data = SVD, features = n_reduced_features, dim_reduction_technique = "SVD")
         
-        ggplot(data = SVD) + 
-          geom_point(mapping = aes(x = 1:Components, 
-                                   y = var_exp,
-                                   size = 1)
-          ) + 
-          scale_x_continuous(breaks = 1:Components) + 
-          scale_y_continuous(limits = c(0,1)) +
-          xlab("Singular Vectors") + 
-          ylab("Variance Explained") + 
-          theme(legend.position="none")
       }
     })
 
-  }) # End pca_sum
+  }) # End variance_explained_plot
 
 
   output$comparison_table <- renderDataTable({
     if (v$doPlot == FALSE) return()
 
     isolate({
-      if (input$Clustering_Method == "K_Means" & input$Similarity_Calc == "Euclidean"){
-
-        d.kmeans = kmeans(dist(dataInput()), centers = input$Num_Groups)
-        GetGroup = d.kmeans$cluster[which(duns()$duns == duns()$duns[which(duns()$vendorname == input$Vendor)])]
-        close = data.frame(duns()[which(d.kmeans$cluster == GetGroup),])
-        close = close[order(close$vendorname),]
-
-        datatable(close,options = list("pageLength" = 10))
-      }else if (input$Clustering_Method == "K_Means" & input$Similarity_Calc == "Euclidean"){
-
-        d.kmeans = kmeans(dist(dataInput()), centers = input$Num_Groups)
-        GetGroup = d.kmeans$cluster[which(duns()$duns == duns()$duns[which(duns()$vendorname == input$Vendor)])]
-        close = data.frame(duns()[which(d.kmeans$cluster == GetGroup),])
-        close = close[order(close$vendorname),]
-
-        datatable(close,options = list("pageLength" = 10))
-      }else if (input$Clustering_Method == "K_Means" & input$Similarity_Calc == "Pearson"){
-
-        d.kmeans = kmeans(as.dist(1 - cor(t(dataInput()), method = "pearson")), centers = input$Num_Groups)
-        GetGroup = d.kmeans$cluster[which(duns()$duns == duns()$duns[which(duns()$vendorname == input$Vendor)])]
-        close = data.frame(duns()[which(d.kmeans$cluster == GetGroup),])
-        close = close[order(close$vendorname),]
-
-        datatable(close,options = list("pageLength" = 10))
-      }else if (input$Clustering_Method == "K_Means" & input$Similarity_Calc == "Pearson"){
-
-        d.kmeans = kmeans(as.dist(1 - cor(t(dataInput()), method = "pearson")), centers = input$Num_Groups)
-        GetGroup = d.kmeans$cluster[which(duns()$duns == duns()$duns[which(duns()$vendorname == input$Vendor)])]
-        close = data.frame(duns()[which(d.kmeans$cluster == GetGroup),])
-        close = close[order(close$vendorname),]
-
-        datatable(close,options = list("pageLength" = 10))
-      }else if (input$Clustering_Method == "Heirarchical" & input$Similarity_Calc == "Euclidean"){
-
-        d.hclust = hclust(dist(dataInput()), method = tolower(input$HClust_Method))
-        cut = cutree(d.hclust, k = input$HClust_NGroups)
-        GetGroup = cut[which(duns()$duns == duns()$duns[which(duns()$vendorname == input$Vendor)])]
-        close = data.frame(duns()[which(cut == GetGroup),])
-        close = close[order(close$vendorname),]
-
-        datatable(close,options = list("pageLength" = 10))
-      }else if (input$Clustering_Method == "Heirarchical" & input$Similarity_Calc == "Euclidean"){
-
-        d.hclust = hclust(dist(dataInput()), method = tolower(input$HClust_Method))
-        cut = cutree(d.hclust, k = input$HClust_NGroups)
-        GetGroup = cut[which(duns()$duns == duns()$duns[which(duns()$vendorname == input$Vendor)])]
-        close = data.frame(duns()[which(cut == GetGroup),])
-        close = close[order(close$vendorname),]
-        close = close[order(close$vendorname),]
-
-        datatable(close,options = list("pageLength" = 10))
-      }else if (input$Clustering_Method == "Heirarchical" & input$Similarity_Calc == "Pearson"){
-
-        d.hclust = hclust(as.dist(1 - cor(t(dataInput()), method = "pearson")), method = tolower(input$HClust_Method))
-        cut = cutree(d.hclust, k = input$HClust_NGroups)
-        GetGroup = cut[which(duns()$duns == duns()$duns[which(duns()$vendorname == input$Vendor)])]
-        close = data.frame(duns()[which(cut == GetGroup),])
-        close = close[order(close$vendorname),]
-
-        datatable(close,options = list("pageLength" = 10))
-      }else if (input$Clustering_Method == "Heirarchical" & input$Similarity_Calc == "Pearson"){
-
-        d.hclust = hclust(as.dist(1 - cor(t(dataInput()), method = "pearson")), method = tolower(input$HClust_Method))
-        cut = cutree(d.hclust, k = input$HClust_NGroups)
-        GetGroup = cut[which(duns()$duns == duns()$duns[which(duns()$vendorname == input$Vendor)])]
-        close = data.frame(duns()[which(cut == GetGroup),])
-        close = close[order(close$vendorname),]
-
-        datatable(close,options = list("pageLength" = 10))
+      
+      if (input$clustering_method == "K_Means"){
+        get_table_kmeans(data_for_clustering = data_for_clustering(), 
+                         duns_vendor_names = duns_vendor_names(), 
+                         distance_definition = input$distance_definition, 
+                         num_groups = input$num_groups_kmeans, 
+                         vendor = input$vendor)
+      }
+      else if (input$clustering_method == "Heirarchical"){
+        get_table_heirarchical(data_for_clustering = data_for_clustering(), 
+                               duns_vendor_names = duns_vendor_names(), 
+                               distance_definition = input$distance_definition, 
+                               num_groups = input$num_groups_hclust, 
+                               vendor = input$vendor, 
+                               hclust_method = input$hclust_method)
       }
     })
     })# End comparison_table
 
-  output$hclust_plot <- renderPlot({
+  output$dendrogram_plot <- renderPlot({
     if (v$doPlot == FALSE) return()
 
     isolate({
-      if (input$Similarity_Calc == "Euclidean"){
-        d.hclust = hclust(dist(dataInput()), method = tolower(input$HClust_Method))
+      if (input$distance_definition == "Euclidean"){
+        d.hclust = hclust(dist(data_for_clustering()), method = tolower(input$hclust_method))
       }
-      else if (input$Similarity_Calc == "Pearson"){
-        d.hclust = hclust(as.dist(1 - cor(t(dataInput()),
-                                          method = tolower(input$Similarity_Calc))),
-                          method = tolower(input$HClust_Method)
+      else if (input$distance_definition == "Pearson"){
+        d.hclust = hclust(as.dist(1 - cor(t(data_for_clustering()),
+                                          method = tolower(input$distance_definition))),
+                          method = tolower(input$hclust_method)
                           )
       }
 
       plot(d.hclust, labels = FALSE, xlab = "Companies", sub = "") #+ abline(h = vline, col = "blue")
     })
 
-  }) # End hclust_plot
+  }) # End dendrogram_plot
 
 
 
