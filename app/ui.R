@@ -33,6 +33,14 @@ ui <- dashboardPage(
                   label = "Choose vendor:", 
                   choices = duns_vendor_names_orig$vendorname,
                   selected = "BOOZ ALLEN HAMILTON INC."),
+      
+      
+      #################################################################
+      #                                                               #
+      #                 PRE-PROCESSING INPUTS                         #
+      #                                                               #
+      #################################################################
+      
       menuItem(text = "Pre-Processing Inputs",
                icon = icon("filter"),
                selectInput(inputId = "dim_reduction_technique",
@@ -56,6 +64,14 @@ ui <- dashboardPage(
       )
     ),
     sidebarMenu(
+      
+      
+      #################################################################
+      #                                                               #
+      #                 CLUSTERING INPUTS                             #
+      #                                                               #
+      #################################################################
+      
       menuItem(text = "Clustering Inputs",
                icon = icon("cube"),
                selectInput(inputId = "clustering_method",
@@ -86,6 +102,13 @@ ui <- dashboardPage(
     ),
     actionButton("update","Update")
   ),
+  
+  #################################################################
+  #                                                               #
+  #                     DASHBOARD BODY                            #
+  #                                                               #
+  #################################################################
+  
   dashboardBody(
 
     tabItems(
