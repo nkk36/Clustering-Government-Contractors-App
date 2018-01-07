@@ -1,6 +1,6 @@
 # Clustering Government Contractors
 
-This is a repository for a Shiny application that clusters government contractors according to government spending data. This application is intended to be educational as it allows the user to set various parameters for clustering on a small subset of the data. The user can choose between using K-Means and Hierarchical clustering. There are options for dimensionality reduction (PCA, SVD) and scaling/centering data as well. The application was created using R Shiny.
+This is a repository for a Shiny application that clusters government contractors according to government spending data. This application is intended to supplement the [Similar Government Contractors](https://github.com/nkk36/Similar-Government-Contractors-App) app. Whereas Similar Government Contractors displays the results of clustering on the entire data set, this app is meant to be educational. It allows the user to set various parameters for clustering on a small subset of the data. The user can choose between using K-Means and Hierarchical clustering. There are options for dimensionality reduction (PCA, SVD) and scaling/centering data as well. The application was created using R Shiny.
 
 ## Getting Started
 
