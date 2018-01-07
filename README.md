@@ -6,13 +6,13 @@ This is a repository for a Shiny application that clusters government contractor
 
 These instructions will get you a copy of the project up and running on your local machine for development purposes. Since I store the data that uses this app remotely you'll need to edit some lines in ui.R and server.R with the appropriate data sets which you can find in the data directory.
 
-1. In ui.R you will need to read **vendornames_for_clustering_app.csv into duns_vendor_names_orig** in the first block of code
-2. In server.R you will need to read in **vendornames_for_clustering_app.csv into duns_vendor_names_orig** and **data_for_clustering_app.csv into naics_activity**
+1. In ui.R you will need to read *vendornames_for_clustering_app.csv* into *duns_vendor_names_orig* in the first block of code
+2. In server.R you will need to read in vendornames_for_clustering_app.csv into *duns_vendor_names_orig* and *data_for_clustering_app.csv* into *naics_activity*
 3. Also you should **comment out any line that with load_data.R** since this function is not saved in the repo
 
 ### Prerequisites
 
-Here is a list of dependencies which you will need to run the application. **It was created using R 3.4.3.**
+Here is a list of packages which you will need to run the application. You will also need all of their package dependencies as well. **This application was created using R 3.4.3.**
 
 | Packages        | Version |
 | --------------- |:-------:|
