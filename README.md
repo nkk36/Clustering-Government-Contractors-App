@@ -4,11 +4,11 @@ This is a repository for a Shiny application that clusters government contractor
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development purposes. Since I store the data that uses this app remotely you'll need to edit some lines in ui.R and server.R with the appropriate data sets which you can find in the data directory.
+These instructions will get you a copy of the project up and running on your local machine for development purposes. Since I store the data that this app uses remotely you'll need to edit some lines in ui.R and server.R with the appropriate data sets which you can find in the data directory.
 
 1. In ui.R you will need to read *vendornames_for_clustering_app.csv* into *duns_vendor_names_orig* in the first block of code
 2. In server.R you will need to read in vendornames_for_clustering_app.csv into *duns_vendor_names_orig* and *data_for_clustering_app.csv* into *naics_activity*
-3. Also you should **comment out any line that with load_data.R** since this function is not saved in the repo
+3. Also you should comment out any line that with load_data.R since this function is not saved in the repo.
 
 ### Prerequisites
 
@@ -23,6 +23,7 @@ Here is a list of packages which you will need to run the application. You will 
 | shiny           | 1.0.5   |
 | shinydashboard  | 0.6.1   |
 
+<!---
 
 ```
 Give examples
@@ -69,27 +70,25 @@ Give an example
 ## Deployment
 
 Add additional notes about how to deploy this on a live system
+-->
 
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+* [R](https://www.r-project.org/) - statistical computing software
+* [R Shiny](https://shiny.rstudio.com/) - R package for developing interactive web applications
+* [Packrat](https://rstudio.github.io/packrat/) - R package for dependency management
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
+If you'd like to contribute you can email me at nkallfa36@gmail.com.
+<!---
 ## Versioning
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
+* **Nicholas Kallfa**
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
@@ -99,3 +98,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 * Hat tip to anyone who's code was used
 * Inspiration
 * etc
+-->
