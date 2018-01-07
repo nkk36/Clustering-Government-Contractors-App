@@ -15,13 +15,13 @@ These instructions will get you a copy of the project up and running on your loc
 Here is a list of dependencies which you will need to run the application. **It was created using R 3.4.3.**
 
 | Packages        | Version |
-| --------------- |:----- :|
-| dplyr           | 0.7.4  |
-| DT              | 0.2    |
-| ggfortify       | 0.4.1  |
-| markdown        | 0.8    |
-| shiny           | 1.0.5  |
-| shinydashboard  | 0.6.1  | 
+| --------------- |:-------:|
+| dplyr           | 0.7.4   |
+| DT              | 0.2     |
+| ggfortify       | 0.4.1   |
+| markdown        | 0.8     |
+| shiny           | 1.0.5   |
+| shinydashboard  | 0.6.1   |
 
 
 ```
