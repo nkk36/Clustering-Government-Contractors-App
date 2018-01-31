@@ -110,6 +110,8 @@ ui <- dashboardPage(
   #################################################################
   
   dashboardBody(
+    
+    tags$head(includeScript("google-analytics.js")),
 
     tabItems(
       tabItem(tabName = "home",
